@@ -10,8 +10,8 @@
 # 1. Toolchain
 # ---------------------------------------------------------------------------
 CC             := gcc
-CFLAGS         := -g -Wall -O0 -std=c99 -MMD -MP     # -MMD/-MP → .d files
-LDFLAGS        := -lm                                # link the math lib
+CFLAGS         := -g -Wall -O0 -std=c99 -MMD -MP -Iinclude     # -MMD/-MP → .d files
+LDFLAGS        := -lm -lws2_32                                # link the math lib
 
 # ---------------------------------------------------------------------------
 # 2. Project layout

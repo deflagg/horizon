@@ -1,8 +1,10 @@
 #include <stdio.h>
-// #include <stdlib.h>
+//#include <stdlib.h>
+#include "include/server.h"
 
 int main() 
 {
-    printf("Hello World!\n");
-    return 0;
+  server();
+
+  return 0;
 }
