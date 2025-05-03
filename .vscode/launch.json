@@ -1,11 +1,20 @@
 {
+    "inputs": [
+        {
+            "id": "mode",
+            "type": "pickString",
+            "description": "Select mode",
+            "options": ["client", "server"],
+            "default": "server"
+        }
+    ],
     "configurations": [
         {
             "name": "Build and Debug Horizon",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Horizon.exe",
-            "args": [],
+            "args": ["${input:mode}"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

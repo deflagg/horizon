@@ -1,4 +1,4 @@
-int __cdecl server(void);
+int __cdecl client(char *ipAddress);
 
 // struct Server
 // {

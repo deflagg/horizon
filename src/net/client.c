@@ -8,15 +8,15 @@
 
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
+// #pragma comment (lib, "Ws2_32.lib")
+// #pragma comment (lib, "Mswsock.lib")
+// #pragma comment (lib, "AdvApi32.lib")
 
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 
-int __cdecl client(int argc, char **argv) 
+int __cdecl client(char *ipAddress) 
 {
     WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;
@@ -29,8 +29,8 @@ int __cdecl client(int argc, char **argv)
     int recvbuflen = DEFAULT_BUFLEN;
     
     // Validate the parameters
-    if (argc != 2) {
-        printf("usage: %s server-name\n", argv[0]);
+    if (ipAddress == NULL) {
+        printf("ipAddres is null");
         return 1;
     }
 
@@ -47,7 +47,7 @@ int __cdecl client(int argc, char **argv)
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(argv[1], DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(ipAddress, DEFAULT_PORT, &hints, &result);
     if ( iResult != 0 ) {
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
