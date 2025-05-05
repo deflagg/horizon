@@ -1,3 +1,5 @@
+#pragma once
+
 int __cdecl client(char *ipAddress);
 
 // struct Server

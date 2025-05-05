@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/server.h"
 #include "../include/client.h"
+#include "../include/node.h"
 
 int main(int argc, char **argv) 
 {
@@ -12,7 +13,9 @@ int main(int argc, char **argv)
   }
   else
   {
-    server();
+    //server();
+    struct Node node = NodeConstructor();
+    node.Start(&node, NULL, NULL);
   }
 
   return 0;

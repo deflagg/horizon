@@ -1,3 +1,5 @@
+#pragma once
+
 int __cdecl server(void);
 
 // struct Server
