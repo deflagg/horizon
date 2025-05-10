@@ -1,5 +1,2 @@
-build/src/main.o: src/main.c src/../include/server.h \
- src/../include/client.h src/../include/node.h
-src/../include/server.h:
-src/../include/client.h:
+build/src/main.o: src/main.c src/../include/node.h
 src/../include/node.h:

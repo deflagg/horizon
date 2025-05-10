@@ -1,64 +1,62 @@
 ###############################################################################
-# Windows-friendly, one-file Make build system
-# • Uses := (simple expansion) everywhere
-# • Recursively finds *.c up to three directory levels
-# • Drops every .o and the final .exe in ./build
-# • Autogenerates and includes header-dependency files (.d)
+# Linux-only Makefile
+# • Recursively collects *.c (up to 5 levels deep – adjust as needed)
+# • Drops all .o files and the final executable in ./build
+# • Generates and includes header-dependency files (.d)
 ###############################################################################
 
 # ---------------------------------------------------------------------------
 # 1. Toolchain
 # ---------------------------------------------------------------------------
-CC             := gcc
-CFLAGS         := -g -Wall -O0 -std=c99 -MMD -MP -Iinclude
-LDFLAGS        := -lm -lws2_32 -lmswsock -ladvapi32
+CC      := gcc
+CFLAGS  := -g -Wall -O0 -std=c99 -MMD -MP -Iinclude
+LDFLAGS := -lm -pthread             # add -pthread etc. only if you actually use them
 
 # ---------------------------------------------------------------------------
 # 2. Project layout
 # ---------------------------------------------------------------------------
-BUILD_DIR      := build
-TARGET_NAME    := Horizon
-TARGET         := $(BUILD_DIR)/$(TARGET_NAME).exe
+BUILD_DIR   := build
+TARGET_NAME := Horizon
+TARGET      := $(BUILD_DIR)/$(TARGET_NAME)   # no .exe on Linux
 
 # ---------------------------------------------------------------------------
 # 3. Source & object lists
-#    (covers ., ./sub, ./sub/sub — add more */*/*/*.c if you go deeper)
+#    (covers ., ./sub, ./sub/sub … – edit depth pattern if needed)
 # ---------------------------------------------------------------------------
-EXCLUDE        := exclude   											  # more than one, separate by a space
-ALL_SRCS       := $(wildcard *.c */*.c */*/*.c */*/*/*.c */*/*/*/*.c)     # looks 5 levels deep
-EXCLUDE_SRCS   := $(foreach d,$(EXCLUDE), \
-                    $(wildcard $(d)/*.c $(d)/*/*.c $(d)/*/*/*.c))
+EXCLUDE        := exclude                    # space-separate dir list to skip
+ALL_SRCS       := $(wildcard *.c */*.c */*/*.c */*/*/*.c */*/*/*/*.c)
+EXCLUDE_SRCS   := $(foreach d,$(EXCLUDE),\
+                   $(wildcard $(d)/*.c $(d)/*/*.c $(d)/*/*/*.c))
 SOURCES        := $(filter-out $(EXCLUDE_SRCS),$(ALL_SRCS))
 
-OBJECTS        := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCES))
-DEPS           := $(OBJECTS:.o=.d)                   # same path, .d extension
+OBJECTS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCES))
+DEPS    := $(OBJECTS:.o=.d)
 
 # ---------------------------------------------------------------------------
-# 4. Top-level targets -------------------------------------------------------
+# 4. Top-level targets
 # ---------------------------------------------------------------------------
 .PHONY: all clean rebuild
 all: $(TARGET)
 
-# Link (puts the exe in build/)
+# Link
 $(TARGET): $(OBJECTS)
-	@echo Linking $@
+	@echo "Linking $@"
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# Compile (mirrors the source tree under build/)
-# $< = original .c     $@ = build/<path>.o
+# Compile
 $(BUILD_DIR)/%.o: %.c
-	@echo Compiling $<
+	@echo "Compiling $<"
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-# Pull in auto-generated header dependency files (safe if none exist yet)
+# Auto-generated header dependencies
 -include $(DEPS)
 
 # ---------------------------------------------------------------------------
-# 5. House-keeping -----------------------------------------------------------
+# 5. House-keeping
 # ---------------------------------------------------------------------------
 clean:
-	@echo Cleaning...
-	-@$(RM) -r $(BUILD_DIR)               # $(RM) is rm -f by default in make
+	@echo "Cleaning..."
+	-@$(RM) -r $(BUILD_DIR)
 
 rebuild: clean all
